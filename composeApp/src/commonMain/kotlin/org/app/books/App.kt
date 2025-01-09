@@ -1,37 +1,30 @@
 package org.app.books
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.painterResource
+import org.app.books.book.presentation.book_list.BookListScreenRoot
+import org.app.books.book.presentation.book_list.BookListViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-import books.composeapp.generated.resources.Res
-import books.composeapp.generated.resources.compose_multiplatform
-
+/**
+ * The root composable function for the application.
+ *
+ * This function sets up the main UI of the app, which is the [BookListScreenRoot].
+ * It also provides a preview for the UI in the IDE.
+ *
+ * Since this is a Compose Multiplatform app, this composable can be used across
+ * different platforms (Android, iOS, Desktop, Web).
+ */
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+    // Display the root of the book list screen.
+    BookListScreenRoot(
+        // Create and remember an instance of the BookListViewModel.
+        viewModel = remember { BookListViewModel() },
+        // Handle the book click action.
+        onBookClick = {
+            // TODO: Navigate to the book details screen.
+            println("Book clicked: ${it.title}")
         }
-    }
+    )
 }
