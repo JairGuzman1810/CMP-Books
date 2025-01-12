@@ -37,7 +37,7 @@ import books.composeapp.generated.resources.favorites
 import books.composeapp.generated.resources.no_favorite_books
 import books.composeapp.generated.resources.no_search_results
 import books.composeapp.generated.resources.search_results
-import org.app.books.book.domain.Book
+import org.app.books.book.domain.model.Book
 import org.app.books.book.presentation.book_list.components.BookList
 import org.app.books.book.presentation.book_list.components.BookSearchBar
 import org.app.books.core.presentation.DarkBlue

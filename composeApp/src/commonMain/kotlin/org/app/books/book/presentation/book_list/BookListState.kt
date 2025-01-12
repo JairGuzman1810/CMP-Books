@@ -1,6 +1,6 @@
 package org.app.books.book.presentation.book_list
 
-import org.app.books.book.domain.Book
+import org.app.books.book.domain.model.Book
 import org.app.books.core.presentation.UiText
 
 /**

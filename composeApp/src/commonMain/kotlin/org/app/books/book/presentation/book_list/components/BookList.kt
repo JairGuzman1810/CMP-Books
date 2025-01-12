@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.app.books.book.domain.Book
+import org.app.books.book.domain.model.Book
 
 /**
  * Composable function that displays a scrollable list of books.

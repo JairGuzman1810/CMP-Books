@@ -1,6 +1,6 @@
 package org.app.books.book.presentation.book_list
 
-import org.app.books.book.domain.Book
+import org.app.books.book.domain.model.Book
 
 /**
  * Represents the possible actions that can be performed on the book list screen.

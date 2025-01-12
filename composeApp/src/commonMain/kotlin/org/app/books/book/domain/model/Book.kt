@@ -1,4 +1,4 @@
-package org.app.books.book.domain
+package org.app.books.book.domain.model
 
 /**
  * Represents a book entity within the application's domain.

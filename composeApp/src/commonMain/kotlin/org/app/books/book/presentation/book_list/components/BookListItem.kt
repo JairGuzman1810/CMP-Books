@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import books.composeapp.generated.resources.Res
 import books.composeapp.generated.resources.book_error_2
 import coil3.compose.rememberAsyncImagePainter
-import org.app.books.book.domain.Book
+import org.app.books.book.domain.model.Book
 import org.app.books.core.presentation.LightBlue
 import org.app.books.core.presentation.SandYellow
 import org.jetbrains.compose.resources.painterResource
