@@ -1,16 +1,13 @@
 package org.app.books
 
-import androidx.compose.runtime.*
-import io.ktor.client.engine.HttpClientEngine
-import org.app.books.book.data.network.KtorRemoteBookDataSource
-import org.app.books.book.data.repository.BookRepositoryImpl
+import androidx.compose.runtime.Composable
 import org.app.books.book.presentation.book_list.BookListScreenRoot
 import org.app.books.book.presentation.book_list.BookListViewModel
-import org.app.books.core.data.HttpClientFactory
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
- * The root composable function for the application.
+ * [App] is the root composable function for the application.
  *
  * This function sets up the main UI of the app, which is the [BookListScreenRoot].
  * It also provides a preview for the UI in the IDE.
@@ -20,25 +17,18 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
  */
 @Composable
 @Preview
-fun App(engine: HttpClientEngine) {
+fun App() {
+    // Retrieves an instance of BookListViewModel using Koin.
+    val viewModel: BookListViewModel = koinViewModel()
+
     // Display the root of the book list screen.
     BookListScreenRoot(
-        // Create and remember an instance of the BookListViewModel.
-        viewModel = remember {
-            BookListViewModel(
-                bookRepository = BookRepositoryImpl(
-                    remoteDataSource = KtorRemoteBookDataSource(
-                        httpClient = HttpClientFactory.create(
-                            engine = engine
-                        )
-                    )
-                )
-            )
-        },
-        // Handle the book click action.
-        onBookClick = {
+        // Provides the BookListViewModel instance to the BookListScreenRoot.
+        viewModel = viewModel,
+        // Handles the book click action.
+        onBookClick = { book ->
             // TODO: Navigate to the book details screen.
-            println("Book clicked: ${it.title}")
+            println("Book clicked: ${book.title}")
         }
     )
 }

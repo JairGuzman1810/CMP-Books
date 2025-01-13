@@ -19,31 +19,9 @@ import org.app.books.core.presentation.UiText
  */
 data class BookListState(
     val searchQuery: String = "Kotlin",
-    val searchResults: List<Book> = books,
+    val searchResults: List<Book> = emptyList(),
     val favoriteBooks: List<Book> = emptyList(),
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val selectedTabIndex: Int = 0,
     val errorMessage: UiText? = null
 )
-
-/**
- * A sample list of books used for initial display or testing purposes.
- *
- * This list contains 100 dummy books with placeholder data.
- * In a real application, this would be replaced by data fetched from a repository.
- */
-val books = (1..100).map {
-    Book(
-        id = it.toString(),
-        title = "Book $it",
-        imageUrl = "https://test.com",
-        authors = listOf("Lorem author"),
-        description = "Description $it",
-        languages = emptyList(),
-        firstPublishYear = null,
-        averageRating = 4.67854,
-        ratingCount = 5,
-        numPages = 100,
-        numEditions = 3
-    )
-}
