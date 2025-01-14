@@ -1,6 +1,7 @@
 package org.app.books
 
 import androidx.compose.ui.window.ComposeUIViewController
+import org.app.books.app.App
 import org.app.books.di.initKoin
 
 /**

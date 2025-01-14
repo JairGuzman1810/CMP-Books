@@ -4,6 +4,7 @@ import org.app.books.book.data.network.KtorRemoteBookDataSource
 import org.app.books.book.data.network.RemoteBookDataSource
 import org.app.books.book.data.repository.BookRepositoryImpl
 import org.app.books.book.domain.repository.BookRepository
+import org.app.books.book.presentation.SelectedBookViewModel
 import org.app.books.book.presentation.book_list.BookListViewModel
 import org.app.books.core.data.HttpClientFactory
 import org.koin.core.module.Module
@@ -56,4 +57,6 @@ val sharedModule = module {
      * This uses the `viewModelOf` function to create a ViewModel instance.
      */
     viewModelOf(::BookListViewModel)
+
+    viewModelOf(::SelectedBookViewModel)
 }

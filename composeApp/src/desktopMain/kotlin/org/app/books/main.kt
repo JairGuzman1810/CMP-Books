@@ -2,6 +2,7 @@ package org.app.books
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import org.app.books.app.App
 import org.app.books.di.initKoin
 /**
  * The main entry point for the desktop application.

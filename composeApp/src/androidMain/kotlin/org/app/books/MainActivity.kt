@@ -3,6 +3,7 @@ package org.app.books
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import org.app.books.app.App
 
 /**
  * [MainActivity] is the main activity for the Android application.
