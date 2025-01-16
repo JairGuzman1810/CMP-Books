@@ -1,15 +1,10 @@
 package org.app.books.app
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -19,6 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import org.app.books.book.presentation.SelectedBookViewModel
+import org.app.books.book.presentation.book_detail.BookDetailAction
+import org.app.books.book.presentation.book_detail.BookDetailScreenRoot
+import org.app.books.book.presentation.book_detail.BookDetailViewModel
 import org.app.books.book.presentation.book_list.BookListScreenRoot
 import org.app.books.book.presentation.book_list.BookListViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -53,7 +51,7 @@ fun App() {
                 // Defines the route for the BookList screen.
                 composable<Route.BookList> {
                     // Retrieves an instance of BookListViewModel using Koin.
-                    val viewModel: BookListViewModel = koinViewModel()
+                    val viewModel = koinViewModel<BookListViewModel>()
 
                     // Retrieves a shared instance of SelectedBookViewModel using Koin.
                     val selectedBookViewModel =
@@ -84,17 +82,25 @@ fun App() {
                     val selectedBookViewModel =
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)
 
+                    val viewModel = koinViewModel<BookDetailViewModel>()
                     // Collects the selected book from the SelectedBookViewModel as a state.
                     val selectedBook by selectedBookViewModel.selectedBook.collectAsStateWithLifecycle()
 
-                    // Displays the selected book's details.
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // Displays the selected book's data as text.
-                        Text(text = "$selectedBook")
+                    // LaunchedEffect to observe changes in the selectedBook.
+                    LaunchedEffect(selectedBook) {
+                        // When selectedBook changes, update the BookDetailViewModel with the new book.
+                        selectedBook?.let { book ->
+                            viewModel.onAction(BookDetailAction.OnSelectedBookChange(book)) // Notify the ViewModel of the selected book.
+                        }
                     }
+
+                    // Display the root of the book detail screen.
+                    BookDetailScreenRoot(
+                        viewModel = viewModel, // Provide the BookDetailViewModel instance.
+                        onBackClick = {
+                            navController.popBackStack() // Navigate back when the back button is clicked.
+                        }
+                    )
                 }
             }
         }

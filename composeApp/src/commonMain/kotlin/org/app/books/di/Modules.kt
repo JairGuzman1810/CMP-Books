@@ -5,6 +5,7 @@ import org.app.books.book.data.network.RemoteBookDataSource
 import org.app.books.book.data.repository.BookRepositoryImpl
 import org.app.books.book.domain.repository.BookRepository
 import org.app.books.book.presentation.SelectedBookViewModel
+import org.app.books.book.presentation.book_detail.BookDetailViewModel
 import org.app.books.book.presentation.book_list.BookListViewModel
 import org.app.books.core.data.HttpClientFactory
 import org.koin.core.module.Module
@@ -58,5 +59,18 @@ val sharedModule = module {
      */
     viewModelOf(::BookListViewModel)
 
+    /**
+     * Provides a [SelectedBookViewModel] instance for each request.
+     *
+     * This uses the `viewModelOf` function to create a ViewModel instance.
+     * This ViewModel is used to share the selected book between screens.
+     */
     viewModelOf(::SelectedBookViewModel)
+
+    /**
+     * Provides a [BookDetailViewModel] instance for each request.
+     *
+     * This uses the `viewModelOf` function to create a ViewModel instance.
+     */
+    viewModelOf(::BookDetailViewModel)
 }
