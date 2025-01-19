@@ -25,4 +25,16 @@ interface BookRepository {
      * @return A [Result] object that either contains a list of [Book] objects or a [DataError.Remote] error.
      */
     suspend fun searchBooks(query: String): Result<List<Book>, DataError.Remote>
+
+    /**
+     * Retrieves the description of a book work.
+     *
+     * This function fetches the description of a book work from a remote data source.
+     * It returns a [Result] object that encapsulates either a successful result containing a String,
+     * or an error result of type [DataError] in case of a data access failure.
+     *
+     * @param bookWorkId The ID of the book work to retrieve the description for.
+     * @return A [Result] object that either contains a String or a [DataError] error.
+     */
+    suspend fun getBookDescription(bookWorkId: String): Result<String?, DataError>
 }

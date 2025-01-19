@@ -32,7 +32,7 @@ class BookRepositoryImpl(
      * @return A [Result] object that either contains a list of [Book] objects or a [DataError.Remote] error.
      */
     override suspend fun searchBooks(query: String): Result<List<Book>, DataError.Remote> {
-// Delegates the search operation to the remote data source.
+        // Delegates the search operation to the remote data source.
         return remoteDataSource.searchBooks(query)
             // Maps the Result<SearchResponseDto, DataError.Remote> to Result<List<Book>, DataError.Remote>.
             .map { dto ->
@@ -42,5 +42,25 @@ class BookRepositoryImpl(
                     it.toBook()
                 }
             }
+    }
+
+    /**
+     * Retrieves the description of a book work.
+     *
+     * This function fetches the description of a book work from a remote data source.
+     * It returns a [Result] object that encapsulates either a successful result containing a String,
+     * or an error result of type [DataError] in case of a data access failure.
+     *
+     * This is a **Domain-oriented operation** because it returns a String,
+     * which are domain models.
+     *
+     * @param bookWorkId The ID of the book work to retrieve the description for.
+     * @return A [Result] object that either contains a String or a [DataError] error.
+     */
+    override suspend fun getBookDescription(bookWorkId: String): Result<String?, DataError> {
+        // Delegates the search operation to the remote data source.
+        return remoteDataSource
+            .getBookDetails(bookWorkId) // Get the book details from the remote data source.
+            .map { it.description } // Map the result to the description.
     }
 }

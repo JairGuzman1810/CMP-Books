@@ -1,8 +1,18 @@
 package org.app.books.book.presentation.book_detail
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.app.books.app.Route
+import org.app.books.book.domain.repository.BookRepository
+import org.app.books.core.domain.onSuccess
 
 /**
  * [BookDetailViewModel] is a [ViewModel] that holds the state and handles actions for the BookDetail screen.
@@ -11,7 +21,13 @@ import kotlinx.coroutines.flow.asStateFlow
  *
  * The [onAction] function handles the different actions that can be triggered from the BookDetail screen.
  */
-class BookDetailViewModel : ViewModel() {
+class BookDetailViewModel(
+    private val bookRepository: BookRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    val bookId = savedStateHandle.toRoute<Route.BookDetail>().id
+
 
     /**
      * [_state] is a [MutableStateFlow] that holds the current [BookDetailState].
@@ -25,7 +41,15 @@ class BookDetailViewModel : ViewModel() {
      *
      * It is exposed as a StateFlow to allow UI components to observe changes.
      */
-    val state = _state.asStateFlow()
+    val state = _state
+        .onStart {
+            fetchBookDescription()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _state.value
+        )
 
     /**
      * Handles the given [action] and updates the [BookDetailState] accordingly.
@@ -57,5 +81,24 @@ class BookDetailViewModel : ViewModel() {
             else -> Unit
         }
 
+    }
+
+    private fun fetchBookDescription() {
+        viewModelScope.launch {
+            bookRepository.getBookDescription(
+                bookWorkId = bookId
+            ).onSuccess { description ->
+                _state.update {
+                    it.copy(
+                        book = it.book?.copy(
+                            description = description
+                        ),
+                        isLoading = false
+                    )
+                }
+
+            }
+
+        }
     }
 }
