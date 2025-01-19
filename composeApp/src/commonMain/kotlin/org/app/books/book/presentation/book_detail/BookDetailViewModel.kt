@@ -23,10 +23,10 @@ import org.app.books.core.domain.onSuccess
  */
 class BookDetailViewModel(
     private val bookRepository: BookRepository,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val bookId = savedStateHandle.toRoute<Route.BookDetail>().id
+    private val bookId = savedStateHandle.toRoute<Route.BookDetail>().id
 
 
     /**
