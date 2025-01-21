@@ -1,7 +1,9 @@
 package org.app.books.book.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import org.app.books.book.domain.model.Book
 import org.app.books.core.domain.DataError
+import org.app.books.core.domain.EmptyResult
 import org.app.books.core.domain.Result
 
 /**
@@ -37,4 +39,45 @@ interface BookRepository {
      * @return A [Result] object that either contains a String or a [DataError] error.
      */
     suspend fun getBookDescription(bookWorkId: String): Result<String?, DataError>
+
+    /**
+     * Retrieves a flow of all favorite books.
+     *
+     * This function returns a [Flow] that emits a list of [Book] objects representing the favorite books.
+     * The flow will emit updates whenever the list of favorite books changes.
+     *
+     * @return A [Flow] that emits a list of favorite [Book] objects.
+     */
+    fun getFavoritesBooks(): Flow<List<Book>>
+
+    /**
+     * Checks if a book is marked as favorite.
+     *
+     * This function returns a [Flow] that emits a boolean value indicating whether the book with the given [id] is marked as favorite.
+     * The flow will emit updates whenever the favorite status of the book changes.
+     *
+     * @param id The ID of the book to check.
+     * @return A [Flow] that emits a boolean value indicating whether the book is favorite.
+     */
+    fun isBookFavorite(id: String): Flow<Boolean>
+
+    /**
+     * Marks a book as favorite.
+     *
+     * This function adds the given [book] to the list of favorite books.
+     * It returns an [EmptyResult] that indicates whether the operation was successful or resulted in a [DataError.Local] error.
+     *
+     * @param book The [Book] to mark as favorite.
+     * @return An [EmptyResult] indicating success or a [DataError.Local] error.
+     */
+    suspend fun markAsFavorite(book: Book): EmptyResult<DataError.Local>
+
+    /**
+     * Deletes a book from favorites.
+     *
+     * This function removes the book with the given [id] from the list of favorite books.
+     *
+     * @param id The ID of the book to delete from favorites.
+     */
+    suspend fun deleteFromFavorites(id: String)
 }

@@ -49,6 +49,13 @@ class BookListViewModel(
     private var searchJob: Job? = null
 
     /**
+     * [observeFavoriteJob] holds the currently active job for observing favorite books.
+     *
+     * This is used to cancel the previous job when a new observation is started.
+     */
+    private var observeFavoriteJob: Job? = null
+
+    /**
      * [_state] is the internal mutable state flow for the book list state.
      *
      * This is used to update the state internally within the [ViewModel].
@@ -59,7 +66,8 @@ class BookListViewModel(
      * [state] is the public, read-only state flow for the book list state.
      *
      * This is exposed to the UI for observing the current state of the book list.
-     * It starts by observing the search query if no books are cached.
+     * It starts by observing the search query if no books are cached and observing favorite books.
+     * It is shared using `SharingStarted.WhileSubscribed` to avoid unnecessary work when there are no active observers.
      */
     val state = _state
         .onStart {
@@ -67,12 +75,14 @@ class BookListViewModel(
             if (cachedBooks.isEmpty()) {
                 observeSearchQuery()
             }
+            // Start observing favorite books.
+            observeFavoriteBooks()
         }
         // Converts the state flow to a shared state flow.
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            _state.value
+            SharingStarted.WhileSubscribed(5000L), // Shares the flow while subscribed with a 5-second timeout.
+            _state.value // The initial value of the state.
         )
 
     /**
@@ -107,9 +117,30 @@ class BookListViewModel(
     }
 
     /**
+     * Observes the favorite books from the repository and updates the state.
+     *
+     * This function cancels any previous observation job, then launches a new one to collect
+     * the favorite books flow from the repository. It updates the state with the new list
+     * of favorite books.
+     */
+    private fun observeFavoriteBooks() {
+        observeFavoriteJob?.cancel() // Cancel any previous observation job.
+        observeFavoriteJob = bookRepository
+            .getFavoritesBooks() // Get the flow of favorite books from the repository.
+            .onEach { favoriteBooks ->
+                _state.update {
+                    it.copy(
+                        favoriteBooks = favoriteBooks // Update the state with the new favorite books.
+                    )
+                }
+            }
+            .launchIn(viewModelScope) // Launch the flow collection in the viewModelScope.
+    }
+
+    /**
      * Observes the search query and performs a search when it changes.
      *
-     * This function observes the [BookListState.searchQuery] from the [state], debounce the changes,
+     * This function observes the [BookListState.searchQuery] from the [state], debounces the changes,
      * and then performs a search if the query is not blank and has at least 2 characters.
      */
     @OptIn(FlowPreview::class)

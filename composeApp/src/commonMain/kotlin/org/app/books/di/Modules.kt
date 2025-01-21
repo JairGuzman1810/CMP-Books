@@ -1,5 +1,8 @@
 package org.app.books.di
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import org.app.books.book.data.database.DatabaseFactory
+import org.app.books.book.data.database.FavoriteBookDatabase
 import org.app.books.book.data.network.KtorRemoteBookDataSource
 import org.app.books.book.data.network.RemoteBookDataSource
 import org.app.books.book.data.repository.BookRepositoryImpl
@@ -51,6 +54,25 @@ val sharedModule = module {
      * This binds the concrete implementation to the interface, allowing for dependency injection.
      */
     singleOf(::BookRepositoryImpl).bind<BookRepository>()
+
+    /**
+     * Provides a singleton instance of [FavoriteBookDatabase].
+     *
+     * This function creates and configures the database instance using the [DatabaseFactory] and [BundledSQLiteDriver].
+     * It builds the database and provides it as a singleton dependency.
+     */
+    single {
+        get<DatabaseFactory>().create() // Get the DatabaseFactory instance and create the database builder.
+            .setDriver(BundledSQLiteDriver()) // Set the BundledSQLiteDriver for desktop platforms.
+            .build() // Build the FavoriteBookDatabase instance.
+    }
+
+    /**
+     * Provides a singleton instance of [FavoriteBookDao].
+     *
+     * This function retrieves the [FavoriteBookDao] from the [FavoriteBookDatabase] instance and provides it as a singleton dependency.
+     */
+    single { get<FavoriteBookDatabase>().favoriteBookDao }
 
     /**
      * Provides a [BookListViewModel] instance for each request.

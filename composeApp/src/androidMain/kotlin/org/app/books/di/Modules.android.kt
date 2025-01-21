@@ -2,6 +2,8 @@ package org.app.books.di
 
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
+import org.app.books.book.data.database.DatabaseFactory
+import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -22,4 +24,12 @@ actual val platformModule: Module
         single<HttpClientEngine> {
             OkHttp.create()
         }
+
+        /**
+         * Provides a singleton instance of [DatabaseFactory] for Android.
+         *
+         * This function creates a [DatabaseFactory] instance using the Android application context.
+         * The application context is retrieved using `androidApplication()`.
+         */
+        single { DatabaseFactory(androidApplication()) } // Creates a DatabaseFactory instance with the Android application context.
     }
