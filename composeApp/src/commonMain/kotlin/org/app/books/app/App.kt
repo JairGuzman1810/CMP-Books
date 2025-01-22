@@ -1,5 +1,7 @@
 package org.app.books.app
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,7 +51,10 @@ fun App() {
                 startDestination = Route.BookList
             ) {
                 // Defines the route for the BookList screen.
-                composable<Route.BookList> {
+                composable<Route.BookList>(
+                    exitTransition = { slideOutHorizontally() }, // Defines the exit transition for the BookList screen, using a slide-out horizontally animation.
+                    popEnterTransition = { slideInHorizontally() } // Defines the pop enter transition for the BookList screen, using a slide-in horizontally animation.
+                ) {
                     // Retrieves an instance of BookListViewModel using Koin.
                     val viewModel = koinViewModel<BookListViewModel>()
 
@@ -77,7 +82,18 @@ fun App() {
                 }
 
                 // Defines the route for the BookDetail screen.
-                composable<Route.BookDetail> {
+                composable<Route.BookDetail>(
+                    enterTransition = {
+                        slideInHorizontally { initialOffset -> // Defines the enter transition for the BookDetail screen, using a slide-in horizontally animation.
+                            initialOffset // Specifies the initial offset for the slide-in animation.
+                        }
+                    },
+                    exitTransition = {
+                        slideOutHorizontally { initialOffset -> // Defines the exit transition for the BookDetail screen, using a slide-out horizontally animation.
+                            initialOffset // Specifies the initial offset for the slide-out animation.
+                        }
+                    }
+                ) {
                     // Retrieves a shared instance of SelectedBookViewModel using Koin.
                     val selectedBookViewModel =
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)

@@ -1,5 +1,7 @@
 package org.app.books.book.presentation.book_list.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,15 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import books.composeapp.generated.resources.Res
 import books.composeapp.generated.resources.book_error_2
+import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import org.app.books.book.domain.model.Book
 import org.app.books.core.presentation.LightBlue
+import org.app.books.core.presentation.PulseAnimation
 import org.app.books.core.presentation.SandYellow
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.round
@@ -103,9 +108,19 @@ fun BookListItem(
                     }
                 )
 
+                // Collect the painter state as a state
+                val painterState by painter.state.collectAsStateWithLifecycle()
+                // Animate the image appearance using animateFloatAsState
+                val transition by animateFloatAsState(
+                    targetValue = if (painterState is AsyncImagePainter.State.Success) 1f else 0f, // Target value is 1f when image is loaded successfully, 0f otherwise
+                    animationSpec = tween(durationMillis = 800) // Animation spec using a tween with 800ms duration
+                )
+
                 // Display a loading indicator or the image based on the loading result.
                 when (val result = imageLoadResult) {
-                    null -> CircularProgressIndicator() // Show a loading indicator while the image is loading.
+                    null -> PulseAnimation(
+                        modifier = Modifier.size(60.dp) // Set the size of the loading indicator.
+                    ) // Show a loading indicator (PulseAnimation) while the image is loading.
                     else -> {
                         // Display the image or an error image.
                         Image(
@@ -123,6 +138,12 @@ fun BookListItem(
                                     ratio = 0.65f, // Set the aspect ratio of the image.
                                     matchHeightConstraintsFirst = true // Match height constraints first.
                                 )
+                                .graphicsLayer {
+                                    rotationX = (1f - transition) * 30f // Rotate the image around the X-axis based on the transition value
+                                    val scale = 0.8f + (0.2f * transition) // Scale the image based on the transition value
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
                         )
                     }
                 }

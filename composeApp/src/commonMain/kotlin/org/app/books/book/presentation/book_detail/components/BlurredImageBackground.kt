@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,7 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +45,7 @@ import books.composeapp.generated.resources.remove_from_favorites
 import coil3.compose.rememberAsyncImagePainter
 import org.app.books.core.presentation.DarkBlue
 import org.app.books.core.presentation.DesertWhite
+import org.app.books.core.presentation.PulseAnimation
 import org.app.books.core.presentation.SandYellow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -92,7 +93,6 @@ fun BlurredImageBackground(
         onError = {
             // Handle image loading errors.
             it.result.throwable.printStackTrace() // Print the error stack trace.
-            imageLoadResult = Result.failure(it.result.throwable) // Image failed to load.
         }
     )
 
@@ -164,9 +164,6 @@ fun BlurredImageBackground(
                     .height(230.dp)
                     .aspectRatio(2 / 3f), // Set the aspect ratio of the book cover.
                 shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = Color.Transparent // Make the card background transparent.
-                ),
                 elevation = CardDefaults.elevatedCardElevation(
                     defaultElevation = 15.dp // Add elevation to the card.
                 )
@@ -178,7 +175,15 @@ fun BlurredImageBackground(
                 ) { result ->
 
                     when (result) {
-                        null -> CircularProgressIndicator() // Show a loading indicator while the image is loading.
+                        null -> Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PulseAnimation(
+                                modifier = Modifier
+                                    .size(60.dp)
+                            ) // Show a loading indicator (PulseAnimation) while the image is loading.
+                        }
                         else -> {
                             Box {
                                 // Display the image or an error image.
